@@ -1,0 +1,49 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentUrl = window.parent.location || window.top.location;
+
+        const urls = {
+            facebook: `https://www.facebook.com/sharer.php?u=${encodeURIComponent(currentUrl)}`,
+            x: `https://x.com/intent/post?url=${encodeURIComponent(currentUrl)}`,
+            linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`,
+            pinterest: `http://pinterest.com/pin/create/link/?url=${encodeURIComponent(currentUrl)}`,
+        };
+
+        document.getElementById("facebook-share").href = urls.facebook;
+        document.getElementById("x-share").href = urls.x;
+        document.getElementById("linkedin-share").href = urls.linkedin;
+        document.getElementById("pinterest-share").href = urls.pinterest;
+    });
+</script>
+
+<div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
+
+    <!-- LinkedIn Button -->
+    <a id="linkedin-share" href="#" target="_blank"
+        style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; background-color: #0077b5; color: white; border-radius: 50%; text-decoration: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn"
+            style="width: 20px; height: 20px;">
+    </a>
+
+
+    <!-- X (formerly Twitter) Button -->
+    <a id="x-share" href="#" target="_blank"
+        style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; background-color: #e5e5e5; color: white; border-radius: 50%; text-decoration: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" alt="X"
+            style="width: 20px; height: 20px;">
+    </a>
+
+    <!-- Facebook Button -->
+    <a id="facebook-share" href="#" target="_blank"
+        style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; background-color: #1877F2; color: white; border-radius: 50%; text-decoration: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"
+            style="width: 20px; height: 20px;">
+    </a>
+
+    <!-- Pinterest Button -->
+    <a id="pinterest-share" href="#" target="_blank"
+        style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; background-color: #bd081c; color: white; border-radius: 50%; text-decoration: none;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" alt="Pinterest"
+            style="width: 20px; height: 20px;">
+    </a>
+</div>

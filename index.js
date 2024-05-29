@@ -1,88 +1,62 @@
 /*
-    Counting Distinct Rectangles
-
-    Problem Statement
-    Given an array of rectangles, where each rectangle is represented as an object with two properties:
-    x (the x-coordinate of the left edge) and width (the width of the rectangle),
-    write a function to count the number of distinct, non-overlapping rectangles.
-    Rectangles are considered distinct if they do not share any common area.
-    The x property indicates the starting point of the rectangle on the x-axis, while the width determines
-    how far it extends to the right. The rectangles may initially overlap or be contained within one another.
-    Your task is to calculate how many non-overlapping rectangles can be identified within this set.
-
-    Input
-    rectangles: An array of objects. Each object has two properties: 
-    x (an integer representing the x-coordinate of the rectangle's left edge) 
-    and width (an integer representing the rectangle's width). The array represents a 
-    list of rectangles to be considered.
-    
-    Output
-    Return an integer representing the number of distinct, non-overlapping rectangles that can be identified 
-    from the given list.
-
-    Examples
-
-
-    Example 1:
-    Input: rectangles = [ { x: 0, width: 4 }, { x: 11, width: 8 }, { x: 3, width: 5 }, { x: 13, width: 4 }, { x: 19, width: 3 } ]
-    Output: 3
-    Explanation: The first two overlap forming one, and the rest are distinct rectangles.
-    
-    Example 2:
-    Input: rectangles = [ { x: 0, width: 4 }, { x: 5, width: 3 } ]
-    Output: 2
-    Explanation: Since there are two rectangles and they do not overlap, the output is 2.
-
-    Example 3:
-    Input: rectangles = [ { x: 0, width: 4 }, { x: 2, width: 2 }, { x: 3, width: 3 } ]
-    Output: 1
-    Explanation: All rectangles overlap with each other, forming one distinct rectangle. Thus, the output is 1.
-    
-    Constraints
-
-    0 <= rectangles.length <= 10^4
-    0 <= x, width <= 10^6
-    All rectangle widths are positive integers.
-    
-    Note
-    Focus on optimizing the function to handle a large number of rectangles efficiently, considering the constraints.
+Task Runner with concurrent limit [Javascript]
+The problem was to complete the add function for Runner class.
+concurrent limit will determine the number of task Runner can run in parallel.
+If the concurrent limit is reached by Runner, rest of the tasked should be queued and only to be executed once the first set of task are completed.
 */
 
-function countRectangles(rectangles) {
-
-    if (rectangles.length === 0) {
-        return 0;
+class Runner {
+    constructor(concurrent) {
+        this.concurrent = concurrent;
+        this.running = 0;
+        this.queue = [];
+        this.priorityQueue = [];
     }
 
-    const sortedRectangles = rectangles.sort((a, b) => a.x - b.x);
-
-    const tempRectangle = {
-        x1: sortedRectangles[0].x,
-        x2: sortedRectangles[0].x + sortedRectangles[0].width
-    }
-
-    let count = 1;
-
-    for (let i = 1; i < sortedRectangles.length; i++) {
-        const currentEndPosition = sortedRectangles[i].x + sortedRectangles[i].width
-        if (sortedRectangles[i].x > tempRectangle.x2) {
-            count++;
-            tempRectangle.x1 = sortedRectangles[i].x
-            tempRectangle.x2 = currentEndPosition
+    add(task, priority = false) {
+        if (priority) {
+            this.priorityQueue.push(task);
         } else {
-            tempRectangle.x2 = currentEndPosition
+            this.queue.push(task);
+        }
+
+        this.execute();
+    }
+
+    async execute() {
+        while (this.running < this.concurrent) {
+            const task = this.priorityQueue.shift() || this.queue.shift();
+            if (!task) {
+                return;
+            }
+            this.running += 1;
+            await task();
+            this.running -= 1;
+            this.execute();
         }
     }
-
-    return count;
 }
 
-const example1 = [
-    { x: 0, width: 4 },
-    { x: 11, width: 8 },
-    { x: 3, width: 5 },
-    { x: 13, width: 4 },
-    { x: 19, width: 3 },
-]
+function task(x) {
+    return function () {
+        return new Promise((resolve, _) => {
+            setTimeout(() => {
+                console.log('task completed', x);
+                resolve();
+            }, 2000);
+        })
+    }
+}
 
-console.log(countRectangles(example1)) // 3
+runner = new Runner(3);
+runner.add(task(2))
+runner.add(task(2))
+runner.add(task(2))
+
+runner.add(task(4))
+runner.add(task(4))
+runner.add(task(4))
+
+runner.add(task(6), true)
+runner.add(task(6), true)
+runner.add(task(6), true)
